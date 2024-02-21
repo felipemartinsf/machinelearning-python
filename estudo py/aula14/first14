@@ -1,0 +1,16 @@
+from sklearn.linear_model import LogisticRegression
+from sklearn import tree
+import pickle
+import numpy as np
+from sklearn.metrics import accuracy_score
+
+path= r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\git\machinelearning-python\estudo py\aula4\credit.pkl'
+with open(path, 'rb') as f:
+    x_credit_treinamento, y_credit_treinamento, x_credit_teste, y_credit_teste = pickle.load(f)
+y_credit_treinamento = np.array(y_credit_treinamento).astype(int)
+
+logist_credit = LogisticRegression(random_state=1)
+logist_credit.fit(x_credit_treinamento,y_credit_treinamento)
+previsoes = logist_credit.predict(x_credit_teste)
+accuracy = accuracy_score(y_credit_teste,previsoes)
+print(accuracy )
