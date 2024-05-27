@@ -28,7 +28,7 @@ import pickle
 
 
 
-caminho_arquivo = r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\estudo\estudo py\aula1\credit_data.csv'
+caminho_arquivo = r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\unifesp\git\machinelearning-python\estudo py\aula1\credit_data.csv'
 
 #visualização básica de gráficos ------------------------------------------
 base_credit = pd.read_csv(caminho_arquivo)
