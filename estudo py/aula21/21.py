@@ -2,6 +2,10 @@ from sklearn.model_selection import cross_val_score, KFold
 import pickle
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from scipy.stats import shapiro
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -45,15 +49,24 @@ for i in range(30): #30 testes é um valor padrão.
     score = cross_val_score(svm, x_credit, y_credit, cv=kfold)
     resultados_svm.append(score.mean())
 
-    neural = MLPClassifier(activation='relu',batch_size=56,solver='adam'     )
-    score = cross_val_score(neural, x_credit, y_credit, cv=kfold)
-    resultados_neural.append(score.mean())
+    #neural = MLPClassifier(activation='relu',batch_size=56,solver='adam', max_iter=400  , learning_rate_init=0.001)
+    #score = cross_val_score(neural, x_credit, y_credit, cv=kfold)
+    #resultados_neural.append(score.mean())
     
 
-
-resultados = pd.DataFrame({'Arvore':resultados_arvore, 'Random':resultados_random_forest,
+'''resultados = pd.DataFrame({'Arvore':resultados_arvore, 'Random':resultados_random_forest,
                            'KNN':resultados_knn, 'logistica':resultados_logistica,
-                           'SVM':resultados_svm, 'neural':resultados_neural})
+                           'SVM':resultados_svm, 'neural':resultados_neural})'''
 
-print(resultados)
-resultados.describe()
+#print(resultados)
+#resultados.describe()
+
+#teste de normalidade nos resultados de cada um dos algoritmos
+alpha = 0.05 #valor padrao do teste de shapiro. se o segundo valor retornado pelo shapiro for maior que o alpha, quer dizer que os dados nao estao em distribuicao normal. dessa formma, nao da pra aplicar ANOVA e TUKEY
+
+
+print(shapiro(resultados_arvore), shapiro(resultados_random_forest), shapiro(resultados_knn), shapiro(resultados_logistica), shapiro(resultados_svm))
+
+sns.displot(resultados_random_forest, kind='kde')
+plt.show()
+
