@@ -13,6 +13,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import MultiComparison
 path= r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\unifesp\git\machinelearning-python\estudo py\aula4\credit.pkl'
 with open(path, 'rb') as f:
     x_credit_treinamento, y_credit_treinamento, x_credit_teste, y_credit_teste = pickle.load(f)
@@ -72,6 +73,7 @@ print(shapiro(resultados_arvore), shapiro(resultados_random_forest), shapiro(res
 #plt.show()
 
 a, p = f_oneway(resultados_arvore, resultados_random_forest, resultados_logistica, resultados_knn, resultados_svm)
+#isso é o teste anova, que verifica se o resultado dos algoritmos é o mesmo. se não for, da pra fazer o tukey para ver o melhor
 print(p)
 resultados_algoritmos = {
     'accuracy': np.concatenate([resultados_arvore, resultados_random_forest, resultados_logistica, resultados_knn, resultados_svm]),
@@ -84,4 +86,8 @@ resultados_algoritmos = {
     ])
 }
 resultados_df = pd.DataFrame(resultados_algoritmos)
-print(resultados_df)
+compara_algoritmos = MultiComparison(resultados_algoritmos['accuracy'],resultados_algoritmos['algoritmo'])
+teste_estatistico = compara_algoritmos.tukeyhsd() #tukey para verificar o melhor
+teste_estatistico.plot_simultaneous() #plota o gráfico
+
+#pickle.dump(svm, open('svm.sav','wb'))
