@@ -12,6 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
+from scipy.stats import f_oneway
 path= r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\unifesp\git\machinelearning-python\estudo py\aula4\credit.pkl'
 with open(path, 'rb') as f:
     x_credit_treinamento, y_credit_treinamento, x_credit_teste, y_credit_teste = pickle.load(f)
@@ -67,6 +68,20 @@ alpha = 0.05 #valor padrao do teste de shapiro. se o segundo valor retornado pel
 
 print(shapiro(resultados_arvore), shapiro(resultados_random_forest), shapiro(resultados_knn), shapiro(resultados_logistica), shapiro(resultados_svm))
 
-sns.displot(resultados_random_forest, kind='kde')
-plt.show()
+#sns.displot(resultados_random_forest, kind='kde')
+#plt.show()
 
+a, p = f_oneway(resultados_arvore, resultados_random_forest, resultados_logistica, resultados_knn, resultados_svm)
+print(p)
+resultados_algoritmos = {
+    'accuracy': np.concatenate([resultados_arvore, resultados_random_forest, resultados_logistica, resultados_knn, resultados_svm]),
+    'algoritmo': np.concatenate([
+        ['arvore'] * 30,
+        ['random'] * 30,
+        ['logistica'] * 30,
+        ['knn'] * 30,
+        ['svm'] * 30
+    ])
+}
+resultados_df = pd.DataFrame(resultados_algoritmos)
+print(resultados_df)
