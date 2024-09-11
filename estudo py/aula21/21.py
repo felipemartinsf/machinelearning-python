@@ -47,7 +47,7 @@ for i in range(30): #30 testes é um valor padrão.
     score = cross_val_score(logistic, x_credit, y_credit, cv=kfold)
     resultados_logistica.append(score.mean())
 
-    svm = SVC(C=2.0, kernel='rbf')
+    svm = SVC(C=2.0, kernel='rbf', probability = True)
     score = cross_val_score(svm, x_credit, y_credit, cv=kfold)
     resultados_svm.append(score.mean())
 
@@ -122,3 +122,44 @@ elif count_paga == count_deve:
     print('Indecisão')
 else:
     print('Não paga')
+
+probabilidade_arvore = arvore.predict_proba(novo_registro)
+probabilidade_knn = knn.predict_proba(novo_registro)
+probabilidade_svm = svm.predict_proba(novo_registro)
+
+confianca_arvore = probabilidade_arvore.max()
+confianca_knn = probabilidade_knn.max()
+confianca_svm = probabilidade_svm.max()
+
+count_paga = 0 
+count_deve = 0
+confianca_minima = 0.99998
+algoritmos = 0
+
+if confianca_arvore >= confianca_minima:
+    algoritmos+=1
+    if resposta_arvore[0] == 1:
+        count_deve +=1
+    else:
+        count_paga +=1
+
+if confianca_knn >= confianca_minima:
+    algoritmos+=1
+    if resposta_knn[0] == 1:
+        count_deve +=1
+    else:
+        count_paga +=1
+
+if confianca_svm >= confianca_minima:
+    algoritmos+=1
+    if resposta_svm[0] == 1:
+        count_deve +=1
+    else:
+        count_paga +=1
+
+if count_paga > count_deve: #aqui ele vai considerar a maioria, olhando as respostas dos tres classicos
+    print('Ele vai pagar, baseado em {}'.format(algoritmos))
+elif count_paga == count_deve:
+    print('Indecisão entre {} algoritmos'.format(algoritmos))
+else:
+    print('Não paga, segundo {} algoritmos'.format(algoritmos))
