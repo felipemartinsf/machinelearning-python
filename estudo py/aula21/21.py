@@ -74,7 +74,6 @@ print(shapiro(resultados_arvore), shapiro(resultados_random_forest), shapiro(res
 
 a, p = f_oneway(resultados_arvore, resultados_random_forest, resultados_logistica, resultados_knn, resultados_svm)
 #isso é o teste anova, que verifica se o resultado dos algoritmos é o mesmo. se não for, da pra fazer o tukey para ver o melhor
-print(p)
 resultados_algoritmos = {
     'accuracy': np.concatenate([resultados_arvore, resultados_random_forest, resultados_logistica, resultados_knn, resultados_svm]),
     'algoritmo': np.concatenate([
@@ -88,6 +87,38 @@ resultados_algoritmos = {
 resultados_df = pd.DataFrame(resultados_algoritmos)
 compara_algoritmos = MultiComparison(resultados_algoritmos['accuracy'],resultados_algoritmos['algoritmo'])
 teste_estatistico = compara_algoritmos.tukeyhsd() #tukey para verificar o melhor
-teste_estatistico.plot_simultaneous() #plota o gráfico
+#teste_estatistico.plot_simultaneous() #plota o gráfico
 
-#pickle.dump(svm, open('svm.sav','wb'))
+#pickle.dump(svm, open('svm.sav','wb')) #aqui salva o algoritmo num .sav
+
+novo_registro = x_credit[0]
+novo_registro = novo_registro.reshape(1,-1)
+
+resposta_arvore = arvore.predict(novo_registro)
+resposta_knn = knn.predict(novo_registro) 
+resposta_svm = svm.predict(novo_registro)
+
+count_paga = 0 
+count_deve = 0
+
+if resposta_arvore[0] == 1:
+    count_deve +=1
+else:
+    count_paga +=1
+
+if resposta_knn[0] == 1:
+    count_deve +=1
+else:
+    count_paga +=1
+
+if resposta_svm[0] == 1:
+    count_deve +=1
+else:
+    count_paga +=1
+
+if count_paga> count_deve: #aqui ele vai considerar a maioria, olhando as respostas dos tres classicos
+    print('Ele vai pagar')
+elif count_paga == count_deve:
+    print('Indecisão')
+else:
+    print('Não paga')
